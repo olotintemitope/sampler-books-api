@@ -27,4 +27,8 @@ class Book extends Model
 		'published_at' => 'date',
 	];
 
+	public function userActionLogs()
+    {
+        return $this->hasMany(UserActionLog::class);
+    }
 }

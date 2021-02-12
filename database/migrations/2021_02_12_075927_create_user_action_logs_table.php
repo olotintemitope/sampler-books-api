@@ -18,7 +18,18 @@ class CreateUserActionLogsTable extends Migration
 			$table->integer('book_id', 10);
 			$table->integer('user_id', 10);
 			$table->enum('action', ['CHECKIN','CHECKOUT']);
+
 			$table->timestamps();
+
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
+
+            $table->foreign('book_id')
+                ->references('id')
+                ->on('books')
+                ->onDelete('cascade');
 
 		});
 	}
