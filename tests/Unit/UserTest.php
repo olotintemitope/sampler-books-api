@@ -9,7 +9,7 @@ class UserTest extends TestCase
 {
 
     /**
-     * A basic test example.
+     * A basic route test.
      *
      * @return void
      */
@@ -18,5 +18,10 @@ class UserTest extends TestCase
         $res = $this->json('GET', route('api.user_all'));
 
         self::assertEquals(Response::HTTP_OK, $res->getStatusCode());
+    }
+
+    public function testThatTheEndpointReturnsUsers()
+    {
+        $res = $this->json('GET', route('api.user_all'));
     }
 }
