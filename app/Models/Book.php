@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Book extends Model
 {
@@ -27,8 +29,8 @@ class Book extends Model
 		'published_at' => 'date',
 	];
 
-	public function userActionLogs()
+	public function users(): BelongsToMany
     {
-        return $this->hasMany(UserActionLog::class);
+        return $this->belongsToMany(User::class);
     }
 }

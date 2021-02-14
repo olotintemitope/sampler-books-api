@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -38,10 +38,10 @@ class User extends Authenticatable
     ];
 
     /**
-     * @return HasMany
+     * @return BelongsToMany
      */
-    public function userActionLogs(): HasMany
+    public function books(): BelongsToMany
     {
-        return $this->hasMany(UserActionLog::class);
+        return $this->belongsToMany(Book::class);
     }
 }
