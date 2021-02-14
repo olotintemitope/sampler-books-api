@@ -12,6 +12,6 @@ class UserActionLogsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        factory(UserActionLog::class, 10)->create();
+        factory(UserActionLog::class)->create();
     }
 }
