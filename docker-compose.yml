@@ -17,7 +17,7 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=sampler
-      - MYSQL_USER=root
+      - MYSQL_USER=homestead
       - MYSQL_PASSWORD=secret
     ports:
       - "8003:3306"
