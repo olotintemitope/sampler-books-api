@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends BaseController
@@ -24,6 +25,7 @@ class UserController extends BaseController
     {
         return $this->sendResponse(
             $this->userRepository->getAll()
+                ->toArray()
         );
     }
 }
