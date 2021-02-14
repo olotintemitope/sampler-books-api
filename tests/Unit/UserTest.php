@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class UserTest extends TestCase
@@ -14,6 +15,8 @@ class UserTest extends TestCase
      */
     public function testSeeRouteTest(): void
     {
-        $this->json('GET', route('api.user_all'));
+        $res = $this->json('GET', route('api.user_all'));
+
+        self::assertEquals(Response::HTTP_OK, $res->getStatusCode());
     }
 }
