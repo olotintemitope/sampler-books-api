@@ -15,21 +15,19 @@ class CreateUserActionLogsTable extends Migration
 	{
 		Schema::create('user_action_logs', function (Blueprint $table) {
 			$table->bigIncrements('id');
-			$table->integer('book_id', 10);
-			$table->integer('user_id', 10);
+			$table->unsignedBigInteger('book_id');
+			$table->unsignedBigInteger('user_id');
 			$table->enum('action', ['CHECKIN','CHECKOUT']);
 
 			$table->timestamps();
 
             $table->foreign('user_id')
                 ->references('id')
-                ->on('users')
-                ->onDelete('cascade');
+                ->on('users');
 
             $table->foreign('book_id')
                 ->references('id')
-                ->on('books')
-                ->onDelete('cascade');
+                ->on('books');
 
 		});
 	}
