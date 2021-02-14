@@ -1,22 +1,23 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+/** @var Factory $factory */
 
-use App\Model;
+use App\Models\{Book, User, UserActionLog};
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(Model::class, function (Faker $faker) {
-    return [
-        'book_id' => function () {
-            return factory(App\Models\Book::class)->create()->id;
-        },
-        'user_id' => function () {
-            factory(App\Models\User::class)->create()->id;
-        },
-        'action' => randomAction(random_int(0, 1)),
-    ];
+$factory->define(UserActionLog::class, function (Faker $faker) {
+    factory(Book::class, 5)->create()->each(function ($book) {
+        $book->users()->save(factory(User::class)->create([
+            'action' => randomAction(random_int(0, 1)),
+        ]));
+    });
 });
 
+/**
+ * @param int $position
+ * @return string
+ */
 function randomAction(int $position): string
 {
     return ['CHECKIN', 'CHECKOUT'][$position];

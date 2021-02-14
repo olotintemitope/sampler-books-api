@@ -2,11 +2,10 @@
 
 /** @var Factory $factory */
 
-use App\Model;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(Model::class, function (Faker $faker) {
+$factory->define(\App\Models\Book::class, function (Faker $faker) {
     return [
         'title' => $faker->title,
         'isbn' => $faker->isbn10,
@@ -15,6 +14,10 @@ $factory->define(Model::class, function (Faker $faker) {
     ];
 });
 
+/**
+ * @param int $position
+ * @return string
+ */
 function randomStatus(int $position): string
 {
     return ['CHECKED_OUT', 'AVAILABLE'][$position];
