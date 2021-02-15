@@ -37,4 +37,16 @@ class UserTest extends TestCase
                 ]
             ]);
     }
+
+    public function testThatUserCanRegister(): void
+    {
+        $data = [
+            'email' => '',
+            'name' => '',
+            'password' => '',
+            'date_of_birth' => '',
+        ];
+
+        $res = $this->json('POST', route('api.user_all'), $data);
+    }
 }
