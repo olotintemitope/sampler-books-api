@@ -7,11 +7,6 @@ use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    /**
-     * A basic route test.
-     *
-     * @return void
-     */
     public function testSeeRouteTest(): void
     {
         $res = $this->json('GET', route('api.user_all'));
@@ -50,6 +45,23 @@ class UserTest extends TestCase
         self::assertEquals("The date of birth field is required.", $data->date_of_birth[0]);
     }
 
+    public function testThatEmailSuppliedIsInvalid(): void
+    {
+        $res = $this->json(
+            'POST',
+            route('api.user_create'),
+            $this->getUserPostData(
+                'testing',
+                'Sampler User 1',
+                'Laztop11',
+                now()->format('Y-m-d')
+            ));
+        $content = json_decode($res->getContent());
+        $data = $content->data;
+
+        self::assertFalse($content->success);
+        self::assertEquals("The email must be a valid email address.", $data->email[0]);
+    }
     /**
      * @param string $email
      * @param string $name
