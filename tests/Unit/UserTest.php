@@ -62,6 +62,25 @@ class UserTest extends TestCase
         self::assertFalse($content->success);
         self::assertEquals("The email must be a valid email address.", $data->email[0]);
     }
+
+    public function testThatRequestWithInvalidDateFormatWillBeRejected(): void
+    {
+        $res = $this->json(
+            'POST',
+            route('api.user_create'),
+            $this->getUserPostData(
+                'testing@sampler.com',
+                'Sampler User 1',
+                'Laztop11',
+                now()->format('Y/m/d')
+            ));
+        $content = json_decode($res->getContent());
+        $data = $content->data;
+
+        self::assertFalse($content->success);
+        self::assertEquals('The date of birth does not match the format Y-m-d.', $data->date_of_birth[0]);
+    }
+
     /**
      * @param string $email
      * @param string $name
