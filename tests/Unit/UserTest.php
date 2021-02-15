@@ -81,6 +81,24 @@ class UserTest extends TestCase
         self::assertEquals('The date of birth does not match the format Y-m-d.', $data->date_of_birth[0]);
     }
 
+    public function testThatInvalidPasswordWillBeRejected(): void
+    {
+        $res = $this->json(
+            'POST',
+            route('api.user_create'),
+            $this->getUserPostData(
+                'testing@sampler.com',
+                'Sampler User 1',
+                '$$lazopoty',
+                now()->format('Y-m-d')
+            ));
+        $content = json_decode($res->getContent());
+        $data = $content->data;
+
+        self::assertFalse($content->success);
+        self::assertEquals("The password may only contain letters and numbers.", $data->password[0]);
+    }
+
     /**
      * @param string $email
      * @param string $name
