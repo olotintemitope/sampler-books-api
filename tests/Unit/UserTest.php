@@ -7,7 +7,6 @@ use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-
     /**
      * A basic route test.
      *
@@ -38,15 +37,33 @@ class UserTest extends TestCase
             ]);
     }
 
-    public function testThatUserCanRegister(): void
+    public function testThatUserCannotRegisterWithoutProvingDetails(): void
     {
-        $data = [
-            'email' => '',
-            'name' => '',
-            'password' => '',
-            'date_of_birth' => '',
-        ];
+        $res = $this->json('POST', route('api.user_create'), $this->getUserPostData());
+        $content = json_decode($res->getContent());
+        $data = $content->data;
 
-        $res = $this->json('POST', route('api.user_create'), $data);
+        self::assertFalse($content->success);
+        self::assertEquals("The name field is required.", $data->name[0]);
+        self::assertEquals("The email field is required.", $data->email[0]);
+        self::assertEquals("The password field is required.", $data->password[0]);
+        self::assertEquals("The date of birth field is required.", $data->date_of_birth[0]);
+    }
+
+    /**
+     * @param string $email
+     * @param string $name
+     * @param string $password
+     * @param string $dateOfBirth
+     * @return string[]
+     */
+    protected function getUserPostData($email = '', $name = '', $password = '', $dateOfBirth = ''): array
+    {
+        return [
+            'email' => $email,
+            'name' => $name,
+            'password' => $password,
+            'date_of_birth' => $dateOfBirth,
+        ];
     }
 }
