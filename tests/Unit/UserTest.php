@@ -20,8 +20,21 @@ class UserTest extends TestCase
         self::assertEquals(Response::HTTP_OK, $res->getStatusCode());
     }
 
-    public function testThatTheEndpointReturnsUsers()
+    public function testThatTheEndpointReturnsUsers(): void
     {
         $res = $this->json('GET', route('api.user_all'));
+
+        $res->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    [
+                        'id',
+                        'name',
+                        'email',
+                        'date_of_birth',
+                    ]
+                ]
+            ]);
     }
 }
