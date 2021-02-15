@@ -53,7 +53,7 @@ class UserController extends BaseController
             'name' => 'required|unique:users|max:255',
             'email' => 'required|email|max:255',
             'password' => 'required|alpha_num|min:8',
-            'date_of_birth' => 'required|date'
+            'date_of_birth' => 'required|date|date_format:Y-m-d'
         ]);
     }
 }
