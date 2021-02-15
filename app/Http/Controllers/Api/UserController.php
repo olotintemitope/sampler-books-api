@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Repository\UserRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class UserController extends BaseController
 {
@@ -27,5 +28,10 @@ class UserController extends BaseController
             $this->userRepository->getAll()
                 ->toArray()
         );
+    }
+
+    public function create(Request $request)
+    {
+
     }
 }
