@@ -47,6 +47,6 @@ class UserTest extends TestCase
             'date_of_birth' => '',
         ];
 
-        $res = $this->json('POST', route('api.user_all'), $data);
+        $res = $this->json('POST', route('api.user_create'), $data);
     }
 }
