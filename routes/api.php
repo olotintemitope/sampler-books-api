@@ -18,5 +18,6 @@ Route::group([
 ], function () {
     Route::get('/user', 'UserController@getAll')->name('api.user_all');
     Route::post('/user', 'UserController@create')->name('api.user_create');
+    Route::put('/user', 'UserController@update')->name('api.user_update');
 
 });

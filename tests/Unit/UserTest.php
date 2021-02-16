@@ -145,7 +145,7 @@ class UserTest extends TestCase
             route('api.user_update', ['id' => $user->id]),
             $this->getUserPostData(
                 'testing@sampler.com',
-                'Sampler User 1',
+                'Sampler User 2',
                 'Lazopoty02',
                 now()->addDays(15)->format('Y-m-d')
             ));
