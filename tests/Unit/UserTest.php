@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use App\Http\Repository\UserRepository;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
@@ -139,9 +138,7 @@ class UserTest extends TestCase
 
     public function testThatUserCanUpdateTheirDetails(): void
     {
-        $this->seed();
-
-        $user = app()->make(UserRepository::class)->getAll()->last();
+        $user = factory(User::class)->create();
 
         $res = $this->json(
             'PUT',
