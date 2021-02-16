@@ -21,4 +21,9 @@ class UserRepository implements UserRepositoryInterface
     {
         return $this->user::all();
     }
+
+    public function create(array $attributes)
+    {
+        return $this->user->create($attributes);
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Repository\UserRepository;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -41,6 +42,19 @@ class UserController extends BaseController
         if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
         }
+
+        $data = $request->all();
+        $data['password'] = bcrypt($data['password']);
+
+        try {
+            $user = $this->userRepository->create($data);
+            $userToken = $user->createToken('Sampler')->accessToken;
+            $user->token = $userToken;
+
+            return $this->sendResponse($user->toArray());
+        } catch (Exception $exception) {
+           return $this->sendError($exception->getMessage());
+        }
     }
 
     /**
@@ -51,7 +65,7 @@ class UserController extends BaseController
     {
         return Validator::make($request->all(), [
             'name' => 'required|unique:users|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|unique:users|max:255',
             'password' => 'required|alpha_num|min:8',
             'date_of_birth' => 'required|date|date_format:Y-m-d'
         ]);

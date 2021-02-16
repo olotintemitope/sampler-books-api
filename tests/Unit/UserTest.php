@@ -2,11 +2,21 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class UserTest extends TestCase
 {
+    use RefreshDatabase;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->artisan('passport:install');
+    }
+
     public function testSeeRouteTest(): void
     {
         $res = $this->json('GET', route('api.user_all'));
@@ -16,6 +26,8 @@ class UserTest extends TestCase
 
     public function testThatTheEndpointReturnsUsers(): void
     {
+        $this->seed();
+
         $res = $this->json('GET', route('api.user_all'));
 
         $res->assertStatus(Response::HTTP_OK)
@@ -97,6 +109,30 @@ class UserTest extends TestCase
 
         self::assertFalse($content->success);
         self::assertEquals("The password may only contain letters and numbers.", $data->password[0]);
+    }
+
+    public function testThatUserCanRegister(): void
+    {
+        $res = $this->json(
+            'POST',
+            route('api.user_create'),
+            $this->getUserPostData(
+                'testing@sampler.com',
+                'Sampler User',
+                'Lazopoty01',
+                now()->addDays(10)->format('Y-m-d')
+            ));
+
+        $res->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    'id',
+                    'name',
+                    'email',
+                    'date_of_birth',
+                ]
+            ]);
     }
 
     /**

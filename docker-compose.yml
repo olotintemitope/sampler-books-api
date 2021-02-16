@@ -12,15 +12,15 @@ services:
     image: mysql:5.7
     container_name: sampler-books-mysql
     working_dir: /application
-    volumes:
-      - .:/application
     environment:
-      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=secret
       - MYSQL_DATABASE=sampler
       - MYSQL_USER=homestead
       - MYSQL_PASSWORD=secret
+    volumes:
+      - .:/application
     ports:
-      - "8003:3306"
+      - "8001:3306"
 
   webserver:
     image: nginx:alpine
