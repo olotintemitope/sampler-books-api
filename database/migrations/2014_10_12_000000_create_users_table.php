@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->date('date_of_birth');
             $table->string('password');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -28,8 +29,12 @@ class CreateUsersTable extends Migration
      *
      * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('users');
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
     }
 }

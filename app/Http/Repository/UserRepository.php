@@ -6,7 +6,6 @@ use App\Models\User;
 
 class UserRepository implements UserRepositoryInterface
 {
-
     /**
      * @var User
      */
@@ -35,5 +34,10 @@ class UserRepository implements UserRepositoryInterface
     public function findOne(int $id)
     {
        return $this->user->find($id);
+    }
+
+    public function delete(int $id)
+    {
+        // TODO: Implement delete() method.
     }
 }

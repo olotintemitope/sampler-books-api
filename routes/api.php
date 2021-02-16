@@ -18,5 +18,6 @@ Route::group([
     Route::group(['middleware' => 'auth:api'], function () {
         Route::post('/user', 'UserController@create')->name('api.user_create');
         Route::put('/user/{id}/update', 'UserController@update')->name('api.user_update');
+        Route::delete('/user/{id}/delete', 'UserController@delete')->name('api.user_delete');
     });
 });
