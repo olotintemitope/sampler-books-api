@@ -5,11 +5,14 @@ namespace Tests\Unit;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
+use Laravel\Passport\Passport;
+use Tests\stub\TokenTrait;
 use Tests\TestCase;
 
 class UserTest extends TestCase
 {
     use RefreshDatabase;
+    use TokenTrait;
 
     public function setUp(): void
     {
@@ -47,7 +50,14 @@ class UserTest extends TestCase
 
     public function testThatUserCannotRegisterWithoutProvingDetails(): void
     {
-        $res = $this->json('POST', route('api.user_create'), $this->getUserPostData());
+        $headers = $this->AuthorizeUser();
+
+        $res = $this->json(
+            'POST',
+            route('api.user_create'),
+            $this->getUserPostData(),
+            $headers
+        );
         $content = json_decode($res->getContent());
         $data = $content->data;
 
@@ -60,6 +70,8 @@ class UserTest extends TestCase
 
     public function testThatEmailSuppliedIsInvalid(): void
     {
+        $headers = $this->AuthorizeUser();
+
         $res = $this->json(
             'POST',
             route('api.user_create'),
@@ -68,7 +80,9 @@ class UserTest extends TestCase
                 'Sampler User 1',
                 'Laztop11',
                 now()->format('Y-m-d')
-            ));
+            ),
+            $headers
+        );
         $content = json_decode($res->getContent());
         $data = $content->data;
 
@@ -78,6 +92,8 @@ class UserTest extends TestCase
 
     public function testThatRequestWithInvalidDateFormatWillBeRejected(): void
     {
+        $headers = $this->AuthorizeUser();
+
         $res = $this->json(
             'POST',
             route('api.user_create'),
@@ -86,7 +102,8 @@ class UserTest extends TestCase
                 'Sampler User 1',
                 'Laztop11',
                 now()->format('Y/m/d')
-            ));
+            ), $headers);
+
         $content = json_decode($res->getContent());
         $data = $content->data;
 
@@ -96,6 +113,8 @@ class UserTest extends TestCase
 
     public function testThatInvalidPasswordWillBeRejected(): void
     {
+        $headers = $this->AuthorizeUser();
+
         $res = $this->json(
             'POST',
             route('api.user_create'),
@@ -104,7 +123,8 @@ class UserTest extends TestCase
                 'Sampler User 1',
                 '$$lazopoty',
                 now()->format('Y-m-d')
-            ));
+            ), $headers);
+
         $content = json_decode($res->getContent());
         $data = $content->data;
 
@@ -114,6 +134,8 @@ class UserTest extends TestCase
 
     public function testThatUserCanRegister(): void
     {
+        $headers = $this->AuthorizeUser();
+
         $res = $this->json(
             'POST',
             route('api.user_create'),
@@ -122,7 +144,7 @@ class UserTest extends TestCase
                 'Sampler User',
                 'Lazopoty01',
                 now()->addDays(10)->format('Y-m-d')
-            ));
+            ), $headers);
 
         $res->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
@@ -138,6 +160,8 @@ class UserTest extends TestCase
 
     public function testThatUserCanUpdateTheirDetails(): void
     {
+        $headers = $this->AuthorizeUser();
+
         $user = factory(User::class)->create();
 
         $res = $this->json(
@@ -148,7 +172,7 @@ class UserTest extends TestCase
                 'Sampler User 2',
                 'Lazopoty02',
                 now()->addDays(15)->format('Y-m-d')
-            ));
+            ), $headers);
 
         $res->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
@@ -158,8 +182,10 @@ class UserTest extends TestCase
             ]);
     }
 
-    public function testThatUserUpdateWithoutRecordWillThrowAnError() : void
+    public function testThatUserUpdateWithoutRecordWillThrowAnError(): void
     {
+        $headers = $this->AuthorizeUser();
+
         $res = $this->json(
             'PUT',
             route('api.user_update', ['id' => 1000]),
@@ -168,7 +194,7 @@ class UserTest extends TestCase
                 'Sampler User 3',
                 'Lazopoty12',
                 now()->addDays(25)->format('Y-m-d')
-            ));
+            ), $headers);
 
         $content = json_decode($res->getContent());
 
@@ -182,14 +208,16 @@ class UserTest extends TestCase
 
     public function testThatPartialUpdateWorks(): void
     {
+        $headers = $this->AuthorizeUser();
+
         $user = factory(User::class)->create();
 
         $res = $this->json(
             'PUT',
             route('api.user_update', ['id' => $user->id]), [
-                'email' => 'testing@sampler.com',
-                'name' => 'Sampler User 4'
-            ]);
+            'email' => 'testing@sampler.com',
+            'name' => 'Sampler User 4'
+        ], $headers);
 
         $res->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
@@ -222,6 +250,22 @@ class UserTest extends TestCase
 
     public function tearDown(): void
     {
-        parent::tearDown();
+        try {
+            parent::tearDown();
+        } catch (\Throwable $e) {
+        }
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function AuthorizeUser(): array
+    {
+        $user = factory(User::class)->create();
+        Passport::actingAs($user);
+
+        $token = $this->getToken()['token'];
+
+        return ["Authorization" => "Bearer $token"];
     }
 }
