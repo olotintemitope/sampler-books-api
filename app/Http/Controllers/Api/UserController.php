@@ -6,6 +6,7 @@ use App\Http\Repository\UserRepository;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends BaseController
@@ -51,10 +52,34 @@ class UserController extends BaseController
             $userToken = $user->createToken('Sampler')->accessToken;
             $user->token = $userToken;
 
-            return $this->sendResponse($user->toArray());
+            return $this->sendResponse($user->toArray(), Response::HTTP_CREATED);
         } catch (Exception $exception) {
            return $this->sendError($exception->getMessage());
         }
+    }
+
+    public function update(Request $request, $id): JsonResponse
+    {
+        $user = $this->userRepository->findOne($id);
+
+        if (null === $user) {
+            return $this->sendError('User not found');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|unique:users|max:255',
+            'email' => 'sometimes|email|unique:users|max:255',
+            'password' => 'sometimes|alpha_num|min:8',
+            'date_of_birth' => 'sometimes|date|date_format:Y-m-d'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
+        $this->userRepository->update($id, $request->all());
+
+        return $this->sendResponse([], Response::HTTP_OK);
     }
 
     /**

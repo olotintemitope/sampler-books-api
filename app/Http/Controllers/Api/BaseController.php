@@ -14,18 +14,18 @@ class BaseController extends Controller
     /**
      * success response method.
      *
-     * @param $result
-     * @param $message
+     * @param array $result
+     * @param int $statusCode
      * @return JsonResponse
      */
-    public function sendResponse(array $result): JsonResponse
+    public function sendResponse(array $result, int $statusCode = 200): JsonResponse
     {
         $response = [
             'success' => true,
             'data' => $result,
         ];
 
-        return response()->json($response, 200);
+        return response()->json($response, $statusCode);
     }
 
     /**

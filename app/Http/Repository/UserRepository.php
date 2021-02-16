@@ -26,4 +26,14 @@ class UserRepository implements UserRepositoryInterface
     {
         return $this->user->create($attributes);
     }
+
+    public function update(int $id, array $attributes): bool
+    {
+        return $this->user->update(['id' => $id], $attributes);
+    }
+
+    public function findOne(int $id)
+    {
+       return $this->user->find($id);
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Http\Repository\UserRepository;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
@@ -124,7 +125,7 @@ class UserTest extends TestCase
                 now()->addDays(10)->format('Y-m-d')
             ));
 
-        $res->assertStatus(Response::HTTP_OK)
+        $res->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
                 'success',
                 'data' => [
@@ -138,7 +139,9 @@ class UserTest extends TestCase
 
     public function testThatUserCanUpdateTheirDetails(): void
     {
-        $user = factory(User::class)->make();
+        $this->seed();
+
+        $user = app()->make(UserRepository::class)->getAll()->last();
 
         $res = $this->json(
             'PUT',
@@ -149,6 +152,13 @@ class UserTest extends TestCase
                 'Lazopoty02',
                 now()->addDays(15)->format('Y-m-d')
             ));
+
+        $res->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                ]
+            ]);
     }
 
     /**
