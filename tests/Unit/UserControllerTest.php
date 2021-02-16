@@ -9,10 +9,10 @@ use Laravel\Passport\Passport;
 use Tests\TestCase;
 
 /**
- * Class UserTest
+ * Class UserControllerTest
  * @package Tests\Unit
  */
-class UserTest extends TestCase
+class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
