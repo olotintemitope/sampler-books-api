@@ -161,6 +161,30 @@ class UserTest extends TestCase
             ]);
     }
 
+    public function testThatUserUpdateWithoutRecordWillThrowAnError() : void
+    {
+        app()->make(UserRepository::class)->getAll()->last();
+
+        $res = $this->json(
+            'PUT',
+            route('api.user_update', ['id' => 1000]),
+            $this->getUserPostData(
+                'testing@sampler.com',
+                'Sampler User 3',
+                'Lazopoty12',
+                now()->addDays(25)->format('Y-m-d')
+            ));
+
+        $content = json_decode($res->getContent());
+
+        $res->assertStatus(Response::HTTP_NOT_FOUND)
+            ->assertJsonStructure([
+                'success',
+                'message'
+            ]);
+        self::assertEquals("User not found", $content->message);
+    }
+
     /**
      * @param string $email
      * @param string $name

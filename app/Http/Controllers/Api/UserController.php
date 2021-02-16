@@ -66,12 +66,7 @@ class UserController extends BaseController
             return $this->sendError('User not found');
         }
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|unique:users|max:255',
-            'email' => 'sometimes|email|unique:users|max:255',
-            'password' => 'sometimes|alpha_num|min:8',
-            'date_of_birth' => 'sometimes|date|date_format:Y-m-d'
-        ]);
+        $validator = $this->getUpdateUserValidator($request);
 
         if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
@@ -94,5 +89,20 @@ class UserController extends BaseController
             'password' => 'required|alpha_num|min:8',
             'date_of_birth' => 'required|date|date_format:Y-m-d'
         ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function getUpdateUserValidator(Request $request): \Illuminate\Contracts\Validation\Validator
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|unique:users|max:255',
+            'email' => 'sometimes|email|unique:users|max:255',
+            'password' => 'sometimes|alpha_num|min:8',
+            'date_of_birth' => 'sometimes|date|date_format:Y-m-d'
+        ]);
+        return $validator;
     }
 }

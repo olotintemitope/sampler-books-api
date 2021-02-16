@@ -14,10 +14,10 @@ $factory->define(UserActionLog::class, function (Faker $faker) {
     $user2 = factory(User::class)->create();
 
     $user1->books()->attach($bookBatch1, [
-        'action' => randomAction(random_int(0, 1))
+        'action' => ['CHECKIN', 'CHECKOUT'][random_int(0, 1)]
     ]);
     $user2->books()->attach($bookBatch2, [
-        'action' => randomAction(random_int(0, 1))
+        'action' => ['CHECKIN', 'CHECKOUT'][random_int(0, 1)]
     ]);
 
     return [
