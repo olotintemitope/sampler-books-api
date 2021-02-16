@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
-use Laravel\Passport\Passport;
+use Tests\AuthorizationTrait;
 use Tests\TestCase;
 
 /**
@@ -15,6 +15,7 @@ use Tests\TestCase;
 class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
+    use AuthorizationTrait;
 
     public function setUp(): void
     {
@@ -302,18 +303,7 @@ class UserControllerTest extends TestCase
         ];
     }
 
-    /**
-     * @return string[]
-     */
-    protected function authorizeUser(): array
-    {
-        $user = factory(User::class)->create();
-        $userToken = $user->createToken('Sampler')->accessToken;
 
-        Passport::actingAs($user);
-
-        return ["Authorization" => "Bearer $userToken"];
-    }
 
     public function tearDown(): void
     {

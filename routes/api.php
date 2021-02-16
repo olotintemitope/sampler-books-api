@@ -20,4 +20,8 @@ Route::group([
         Route::put('/user/{id}/update', 'UserController@update')->name('api.user_update');
         Route::delete('/user/{id}/delete', 'UserController@delete')->name('api.user_delete');
     });
+
+    Route::group([], function () {
+        Route::post('auth/login', 'AccessTokenController@login')->name('api.user_login');
+    });
 });
