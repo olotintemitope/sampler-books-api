@@ -6,13 +6,11 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Laravel\Passport\Passport;
-use Tests\stub\TokenTrait;
 use Tests\TestCase;
 
 class UserTest extends TestCase
 {
     use RefreshDatabase;
-    use TokenTrait;
 
     public function setUp(): void
     {
@@ -231,6 +229,21 @@ class UserTest extends TestCase
         self::assertTrue($content->success);
     }
 
+    public function testThatUserWithoutTokenCannotUpdateTheirDetails(): void
+    {
+        $res = $this->json(
+            'POST',
+            route('api.user_create'),
+            $this->getUserPostData(
+                'testing@sampler.com',
+                'Sampler User',
+                'Lazopoty01',
+                now()->addDays(10)->format('Y-m-d')
+            ));
+
+        $res->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
     /**
      * @param string $email
      * @param string $name
@@ -262,10 +275,10 @@ class UserTest extends TestCase
     protected function AuthorizeUser(): array
     {
         $user = factory(User::class)->create();
+        $userToken = $user->createToken('Sampler')->accessToken;
+
         Passport::actingAs($user);
 
-        $token = $this->getToken()['token'];
-
-        return ["Authorization" => "Bearer $token"];
+        return ["Authorization" => "Bearer $userToken"];
     }
 }
