@@ -163,8 +163,6 @@ class UserTest extends TestCase
 
     public function testThatUserUpdateWithoutRecordWillThrowAnError() : void
     {
-        app()->make(UserRepository::class)->getAll()->last();
-
         $res = $this->json(
             'PUT',
             route('api.user_update', ['id' => 1000]),
@@ -183,6 +181,29 @@ class UserTest extends TestCase
                 'message'
             ]);
         self::assertEquals("User not found", $content->message);
+    }
+
+    public function testThatPartialUpdateWorks(): void
+    {
+        $user = factory(User::class)->create();
+
+        $res = $this->json(
+            'PUT',
+            route('api.user_update', ['id' => $user->id]), [
+                'email' => 'testing@sampler.com',
+                'name' => 'Sampler User 4'
+            ]);
+
+        $res->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                ]
+            ]);
+
+        $content = json_decode($res->getContent());
+
+        self::assertTrue($content->success);
     }
 
     /**
