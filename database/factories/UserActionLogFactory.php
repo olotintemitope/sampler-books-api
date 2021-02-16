@@ -23,15 +23,6 @@ $factory->define(UserActionLog::class, function (Faker $faker) {
     return [
         'user_id' => $user1->id,
         'book_id' => $bookBatch1->first()->id,
-        'action' => randomAction(random_int(0, 1))
+        'action' => ['CHECKIN', 'CHECKOUT'][random_int(0, 1)],
     ];
 });
-
-/**
- * @param int $position
- * @return string
- */
-function randomAction(int $position): string
-{
-    return ['CHECKIN', 'CHECKOUT'][$position];
-}

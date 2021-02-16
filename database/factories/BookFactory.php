@@ -11,15 +11,6 @@ $factory->define(Book::class, function (Faker $faker) {
         'title' => $faker->jobTitle,
         'isbn' => $faker->isbn10,
         'published_at' => $faker->date(),
-        'status' => randomStatus(random_int(0, 1)),
+        'status' => ['CHECKED_OUT', 'AVAILABLE'][random_int(0, 1)],
     ];
 });
-
-/**
- * @param int $position
- * @return string
- */
-function randomStatus(int $position): string
-{
-    return ['CHECKED_OUT', 'AVAILABLE'][$position];
-}

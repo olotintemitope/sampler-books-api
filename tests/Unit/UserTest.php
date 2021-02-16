@@ -138,7 +138,7 @@ class UserTest extends TestCase
 
     public function testThatUserCanUpdateTheirDetails(): void
     {
-        $user = factory(User::class)->create();
+        $user = factory(User::class)->make();
 
         $res = $this->json(
             'PUT',
@@ -166,5 +166,10 @@ class UserTest extends TestCase
             'password' => $password,
             'date_of_birth' => $dateOfBirth,
         ];
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
     }
 }
