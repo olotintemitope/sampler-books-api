@@ -260,6 +260,18 @@ class UserTest extends TestCase
         self::assertEquals($res->getStatusCode(), Response::HTTP_UNAUTHORIZED);
     }
 
+    public function testThatUserWithWrongIdCannotBeSoftDeleted(): void
+    {
+        $headers = $this->authorizeUser();
+
+        $res = $this->json(
+            'DELETE',
+            route('api.user_delete', ['id' => 2000]), [
+        ], $headers);
+
+        self::assertEquals($res->getStatusCode(), Response::HTTP_NOT_FOUND);
+    }
+
     public function testThatUserWithTokenCannotBeSoftDeleted(): void
     {
         $headers = $this->authorizeUser();
