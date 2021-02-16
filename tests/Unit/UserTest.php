@@ -8,6 +8,10 @@ use Illuminate\Http\Response;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 
+/**
+ * Class UserTest
+ * @package Tests\Unit
+ */
 class UserTest extends TestCase
 {
     use RefreshDatabase;
@@ -273,14 +277,6 @@ class UserTest extends TestCase
         ];
     }
 
-    public function tearDown(): void
-    {
-        try {
-            parent::tearDown();
-        } catch (\Throwable $e) {
-        }
-    }
-
     /**
      * @return string[]
      */
@@ -292,5 +288,13 @@ class UserTest extends TestCase
         Passport::actingAs($user);
 
         return ["Authorization" => "Bearer $userToken"];
+    }
+
+    public function tearDown(): void
+    {
+        try {
+            parent::tearDown();
+        } catch (\Throwable $e) {
+        }
     }
 }

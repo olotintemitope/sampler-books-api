@@ -58,6 +58,11 @@ class UserController extends BaseController
         }
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
+     */
     public function update(Request $request, $id): JsonResponse
     {
         $user = $this->userRepository->findOne($id);
@@ -73,6 +78,23 @@ class UserController extends BaseController
         }
 
         $this->userRepository->update($id, $request->all());
+
+        return $this->sendResponse([], Response::HTTP_OK);
+    }
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function delete($id): JsonResponse
+    {
+        $user = $this->userRepository->findOne($id);
+
+        if (null === $user) {
+            return $this->sendError('User not found');
+        }
+
+        $this->userRepository->delete($id);
 
         return $this->sendResponse([], Response::HTTP_OK);
     }
@@ -97,12 +119,11 @@ class UserController extends BaseController
      */
     protected function getUpdateUserValidator(Request $request): \Illuminate\Contracts\Validation\Validator
     {
-        $validator = Validator::make($request->all(), [
+        return Validator::make($request->all(), [
             'name' => 'sometimes|unique:users|max:255',
             'email' => 'sometimes|email|unique:users|max:255',
             'password' => 'sometimes|alpha_num|min:8',
             'date_of_birth' => 'sometimes|date|date_format:Y-m-d'
         ]);
-        return $validator;
     }
 }
