@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
@@ -133,6 +134,21 @@ class UserTest extends TestCase
                     'date_of_birth',
                 ]
             ]);
+    }
+
+    public function testThatUserCanUpdateTheirDetails(): void
+    {
+        $user = factory(User::class)->create();
+
+        $res = $this->json(
+            'PUT',
+            route('api.user_update', ['id' => $user->id]),
+            $this->getUserPostData(
+                'testing@sampler.com',
+                'Sampler User 1',
+                'Lazopoty02',
+                now()->addDays(15)->format('Y-m-d')
+            ));
     }
 
     /**
