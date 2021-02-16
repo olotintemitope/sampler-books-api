@@ -52,7 +52,7 @@ class UserTest extends TestCase
 
     public function testThatUserCannotRegisterWithoutProvingDetails(): void
     {
-        $headers = $this->AuthorizeUser();
+        $headers = $this->authorizeUser();
 
         $res = $this->json(
             'POST',
@@ -72,7 +72,7 @@ class UserTest extends TestCase
 
     public function testThatEmailSuppliedIsInvalid(): void
     {
-        $headers = $this->AuthorizeUser();
+        $headers = $this->authorizeUser();
 
         $res = $this->json(
             'POST',
@@ -94,7 +94,7 @@ class UserTest extends TestCase
 
     public function testThatRequestWithInvalidDateFormatWillBeRejected(): void
     {
-        $headers = $this->AuthorizeUser();
+        $headers = $this->authorizeUser();
 
         $res = $this->json(
             'POST',
@@ -115,7 +115,7 @@ class UserTest extends TestCase
 
     public function testThatInvalidPasswordWillBeRejected(): void
     {
-        $headers = $this->AuthorizeUser();
+        $headers = $this->authorizeUser();
 
         $res = $this->json(
             'POST',
@@ -136,7 +136,7 @@ class UserTest extends TestCase
 
     public function testThatUserCanRegister(): void
     {
-        $headers = $this->AuthorizeUser();
+        $headers = $this->authorizeUser();
 
         $res = $this->json(
             'POST',
@@ -162,7 +162,7 @@ class UserTest extends TestCase
 
     public function testThatUserCanUpdateTheirDetails(): void
     {
-        $headers = $this->AuthorizeUser();
+        $headers = $this->authorizeUser();
 
         $user = factory(User::class)->create();
 
@@ -186,7 +186,7 @@ class UserTest extends TestCase
 
     public function testThatUserUpdateWithoutRecordWillThrowAnError(): void
     {
-        $headers = $this->AuthorizeUser();
+        $headers = $this->authorizeUser();
 
         $res = $this->json(
             'PUT',
@@ -210,7 +210,7 @@ class UserTest extends TestCase
 
     public function testThatPartialUpdateWorks(): void
     {
-        $headers = $this->AuthorizeUser();
+        $headers = $this->authorizeUser();
 
         $user = factory(User::class)->create();
 
@@ -260,6 +260,19 @@ class UserTest extends TestCase
         self::assertEquals($res->getStatusCode(), Response::HTTP_UNAUTHORIZED);
     }
 
+    public function testThatUserWithTokenCannotBeSoftDeleted(): void
+    {
+        $headers = $this->authorizeUser();
+        $user = factory(User::class)->create();
+
+        $res = $this->json(
+            'DELETE',
+            route('api.user_delete', ['id' => $user->id]), [
+        ], $headers);
+
+        self::assertEquals($res->getStatusCode(), Response::HTTP_OK);
+    }
+
     /**
      * @param string $email
      * @param string $name
@@ -280,7 +293,7 @@ class UserTest extends TestCase
     /**
      * @return string[]
      */
-    protected function AuthorizeUser(): array
+    protected function authorizeUser(): array
     {
         $user = factory(User::class)->create();
         $userToken = $user->createToken('Sampler')->accessToken;
