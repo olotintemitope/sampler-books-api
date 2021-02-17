@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Http\Response;
 use Tests\AuthorizationTrait;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,5 +22,7 @@ class BookControllerTest extends TestCase
     public function testSeeRoute(): void
     {
         $res = $this->json('GET', route('api.book_all'));
+
+        self::assertEquals(Response::HTTP_OK, $res->getStatusCode());
     }
 }

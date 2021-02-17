@@ -37,6 +37,8 @@ class UserController extends BaseController
     }
 
     /**
+     * Create a new user
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -62,6 +64,8 @@ class UserController extends BaseController
     }
 
     /**
+     * Update user details
+     *
      * @param Request $request
      * @param $id
      * @return JsonResponse
@@ -86,6 +90,8 @@ class UserController extends BaseController
     }
 
     /**
+     * Delete user details
+     *
      * @param $id
      * @return JsonResponse
      */
@@ -103,6 +109,8 @@ class UserController extends BaseController
     }
 
     /**
+     * Validate create user
+     *
      * @param Request $request
      * @return \Illuminate\Contracts\Validation\Validator
      */
@@ -117,6 +125,8 @@ class UserController extends BaseController
     }
 
     /**
+     * Validate update user details
+     *
      * @param Request $request
      * @return \Illuminate\Contracts\Validation\Validator
      */

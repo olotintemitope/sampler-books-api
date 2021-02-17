@@ -25,4 +25,6 @@ Route::group([
         Route::post('auth/login', 'AccessTokenController@login')->name('api.user_login');
         Route::post('auth/logout', 'AccessTokenController@logout')->name('api.user_logout');
     });
+
+    Route::get('/book', 'BookController@getAll')->name('api.book_all');
 });
