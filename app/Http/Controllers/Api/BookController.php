@@ -39,7 +39,13 @@ class BookController extends BaseController
         );
     }
 
-    public function create(Request $request)
+    /**
+     * Create a new book
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function create(Request $request): JsonResponse
     {
         $statuses = implode(',', ['CHECKED_OUT', 'AVAILABLE']);
         $bookNumbers = implode(',', $this->getBookNumbers());
@@ -61,6 +67,35 @@ class BookController extends BaseController
     }
 
     /**
+     * Update book details
+     *
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
+     */
+    public function update(Request $request, $id): JsonResponse
+    {
+        $book = $this->bookRepository->findOne($id);
+
+        if (null === $book) {
+            return $this->sendError('Book not found');
+        }
+
+        $statuses = implode(',', ['CHECKED_OUT', 'AVAILABLE']);
+        $bookNumbers = implode(',', $this->getBookNumbers());
+
+        $validator = $this->getUpdateBookValidator($request, $statuses, $bookNumbers);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
+        $this->bookRepository->update($id, $request->all());
+
+        return $this->sendResponse([], Response::HTTP_OK);
+    }
+
+    /**
      * Get the book validator
      *
      * @param Request $request
@@ -75,6 +110,24 @@ class BookController extends BaseController
             'isbn' => "required|unique:books|in:$bookNumbers|max:10",
             'published_at' => 'required|date|date_format:Y-m-d',
             'status' => "required|string|in:$statuses",
+        ]);
+    }
+
+    /**
+     * Validate book on update record
+     *
+     * @param Request $request
+     * @param $statuses
+     * @param $bookNumbers
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    private function getUpdateBookValidator(Request $request, $statuses, $bookNumbers): \Illuminate\Contracts\Validation\Validator
+    {
+        return Validator::make($request->all(), [
+            'title' => 'sometimes|unique:books|max:255',
+            'isbn' => "sometimes|unique:books|in:$bookNumbers|max:10",
+            'published_at' => 'sometimes|date|date_format:Y-m-d',
+            'status' => "sometimes|string|in:$statuses",
         ]);
     }
 

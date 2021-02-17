@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\Book;
 use Illuminate\Http\Response;
 use Tests\AuthorizationTrait;
 use Tests\TestCase;
@@ -141,6 +142,36 @@ class BookControllerTest extends TestCase
                     'status',
                 ]
             ]);
+    }
+
+    public function testUpdateBookDetails(): void
+    {
+        $headers = $this->authorizeUser();
+
+        $book = factory(Book::class)->create();
+
+        $res = $this->json(
+            'PUT',
+            route('api.book_update', ['id' => $book->id]),
+            $this->getBookPostData(
+                'The kings of sampler dome',
+                '0593139135',
+                now()->addDays(50)->format('Y-m-d'),
+                'AVAILABLE'
+            ),
+            $headers
+        );
+
+        $res->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                ]
+            ]);
+
+        $content = json_decode($res->getContent());
+
+        self::assertTrue($content->success);
     }
 
     /**

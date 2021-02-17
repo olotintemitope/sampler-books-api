@@ -52,13 +52,26 @@ class BookRepository implements UserRepositoryInterface
         // TODO: Implement delete() method.
     }
 
-    public function update(int $id, array $attributes)
+    /**
+     * Update a book record
+     *
+     * @param int $id
+     * @param array $attributes
+     * @return bool|mixed
+     */
+    public function update(int $id, array $attributes): bool
     {
-        // TODO: Implement update() method.
+        return $this->book->update(['id' => $id], $attributes);
     }
 
+    /**
+     * Find a book by id
+     *
+     * @param int $id
+     * @return mixed
+     */
     public function findOne(int $id)
     {
-        // TODO: Implement findOne() method.
+        return $this->book->find($id);
     }
 }
