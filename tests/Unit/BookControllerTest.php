@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Models\Book;
-use App\Models\User;
 use Illuminate\Http\Response;
 use Tests\AuthorizationTrait;
 use Tests\TestCase;
@@ -219,7 +218,7 @@ class BookControllerTest extends TestCase
         $res->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
-    public function testThatUserWithoutTokenCannotSoftDeleteTheirData(): void
+    public function testThatBookWithoutTokenCannotSoftDeleteTheirData(): void
     {
         $book = factory(Book::class)->create();
 
@@ -228,6 +227,18 @@ class BookControllerTest extends TestCase
             route('api.book_delete', ['id' => $book->id]));
 
         self::assertEquals($res->getStatusCode(), Response::HTTP_UNAUTHORIZED);
+    }
+
+    public function testThatBookWithWrongIdCannotBeSoftDeleted(): void
+    {
+        $headers = $this->authorizeUser();
+
+        $res = $this->json(
+            'DELETE',
+            route('api.book_delete', ['id' => 2000]), [
+        ], $headers);
+
+        self::assertEquals($res->getStatusCode(), Response::HTTP_NOT_FOUND);
     }
 
     /**
