@@ -6,6 +6,7 @@ use App\Http\Repository\BookRepository;
 use App\Http\Repository\UserRepository;
 use App\Models\Book;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BookController extends BaseController
@@ -28,8 +29,11 @@ class BookController extends BaseController
      * Get all books
      * @return Book[]|Collection|mixed
      */
-    public function getAll()
+    public function getAll(): JsonResponse
     {
-        return $this->bookRepository->getAll();
+        return $this->sendResponse(
+            $this->bookRepository->getAll()
+                ->toArray()
+        );
     }
 }

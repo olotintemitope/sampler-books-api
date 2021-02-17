@@ -25,4 +25,26 @@ class BookControllerTest extends TestCase
 
         self::assertEquals(Response::HTTP_OK, $res->getStatusCode());
     }
+
+    public function testThatTheEndpointReturnsBooks(): void
+    {
+        $this->seed();
+
+        $res = $this->json('GET', route('api.book_all'));
+
+        $res->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    [
+                        'id',
+                        'title',
+                        'isbn',
+                        'published_at',
+                        'status',
+                    ]
+                ]
+            ]);
+
+    }
 }
