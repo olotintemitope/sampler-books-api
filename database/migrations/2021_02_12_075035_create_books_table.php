@@ -20,6 +20,7 @@ class CreateBooksTable extends Migration
 			$table->date('published_at');
 			$table->enum('status', ['CHECKED_OUT', 'AVAILABLE']);
 			$table->timestamps();
+            $table->softDeletes();
 
 		});
 	}
@@ -32,6 +33,10 @@ class CreateBooksTable extends Migration
 	public function down()
 	{
 		Schema::dropIfExists('books');
+
+        Schema::table('books', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
 	}
 
 }
