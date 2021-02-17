@@ -174,6 +174,34 @@ class BookControllerTest extends TestCase
         self::assertTrue($content->success);
     }
 
+    public function testPartiallyUpdateBookDetails(): void
+    {
+        $headers = $this->authorizeUser();
+
+        $book = factory(Book::class)->create();
+
+        $res = $this->json(
+            'PUT',
+            route('api.book_update', ['id' => $book->id]),
+            [
+                'title' => 'The kings of sampler dome',
+                'status' => 'CHECKED_OUT',
+            ],
+            $headers
+        );
+
+        $res->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                ]
+            ]);
+
+        $content = json_decode($res->getContent());
+
+        self::assertTrue($content->success);
+    }
+
     /**
      * Set book data
      *
