@@ -76,7 +76,18 @@ class AuthenticationTest extends TestCase
             'email' => $user->email,
         ]);
 
-        dd($res->content());
+        self::assertEquals($res->getStatusCode(), Response::HTTP_NO_CONTENT);
+    }
+
+    public function testThatUserWithoutCredentialsCannotLogOut() : void
+    {
+        $res = $this->json(
+            'POST',
+            route('api.user_logout'), [
+            'email' => 'nologin@details.com',
+        ]);
+
+        self::assertEquals($res->getStatusCode(), Response::HTTP_NOT_FOUND);
     }
 
     public function tearDown(): void

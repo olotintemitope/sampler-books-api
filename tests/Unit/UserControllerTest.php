@@ -14,6 +14,8 @@ use Tests\TestCase;
  */
 class UserControllerTest extends TestCase
 {
+    public const PASSWORD = '27kdN3r8A%X%';
+
     use RefreshDatabase;
     use AuthorizationTrait;
 
@@ -81,7 +83,7 @@ class UserControllerTest extends TestCase
             $this->getUserPostData(
                 'testing',
                 'Sampler User 1',
-                'Laztop11',
+                ucwords(bin2hex(random_bytes(10))),
                 now()->format('Y-m-d')
             ),
             $headers
@@ -132,7 +134,7 @@ class UserControllerTest extends TestCase
         $data = $content->data;
 
         self::assertFalse($content->success);
-        self::assertEquals("The password may only contain letters and numbers.", $data->password[0]);
+        self::assertEquals("The password format is invalid.", $data->password[0]);
     }
 
     public function testThatUserCanRegister(): void
@@ -145,7 +147,7 @@ class UserControllerTest extends TestCase
             $this->getUserPostData(
                 'testing@sampler.com',
                 'Sampler User',
-                'Lazopoty01',
+                self::PASSWORD,
                 now()->addDays(10)->format('Y-m-d')
             ), $headers);
 
@@ -173,7 +175,7 @@ class UserControllerTest extends TestCase
             $this->getUserPostData(
                 'testing@sampler.com',
                 'Sampler User 2',
-                'Lazopoty02',
+                self::PASSWORD,
                 now()->addDays(15)->format('Y-m-d')
             ), $headers);
 
@@ -195,7 +197,7 @@ class UserControllerTest extends TestCase
             $this->getUserPostData(
                 'testing@sampler.com',
                 'Sampler User 3',
-                'Lazopoty12',
+                ucwords(bin2hex(random_bytes(10))),
                 now()->addDays(25)->format('Y-m-d')
             ), $headers);
 
@@ -242,7 +244,7 @@ class UserControllerTest extends TestCase
             $this->getUserPostData(
                 'testing@sampler.com',
                 'Sampler User',
-                'Lazopoty01',
+                ucwords(bin2hex(random_bytes(10))),
                 now()->addDays(10)->format('Y-m-d')
             ));
 
