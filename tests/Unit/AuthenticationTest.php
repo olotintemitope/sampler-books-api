@@ -29,7 +29,6 @@ class AuthenticationTest extends TestCase
     public function testThatUserCanLogin(): void
     {
         $user = factory(User::class)->create();
-
         $this->authorizeUser();
 
         $res = $this->json(
@@ -51,6 +50,19 @@ class AuthenticationTest extends TestCase
                     ]
 
             ]);
+    }
+
+    public function testThatUserWithoutAnExistingCredentialCannotLogin() : void
+    {
+        $res = $this->json(
+            'POST',
+            route('api.user_login'),
+            [
+                'email' => 'emailnot@found.com',
+                'password' => ucwords(bin2hex(random_bytes(10)))
+            ]);
+
+        self::assertEquals($res->getStatusCode(), Response::HTTP_NOT_FOUND);
     }
 
     public function tearDown(): void

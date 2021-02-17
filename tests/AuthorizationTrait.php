@@ -20,7 +20,6 @@ trait AuthorizationTrait
     public function authorizeUser($attributes = []): array
     {
         $user = factory(User::class)->create($attributes);
-
         $userToken = $user->createToken('Sampler')->accessToken;
 
         Passport::actingAs($user);
