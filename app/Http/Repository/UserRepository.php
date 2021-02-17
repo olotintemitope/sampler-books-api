@@ -26,6 +26,8 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
+     * Get all users
+     *
      * @return User[]|Collection
      */
     public function getAll()
@@ -34,6 +36,8 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
+     * Create a new user
+     *
      * @param array $attributes
      * @return mixed
      */
@@ -43,6 +47,8 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
+     * Update an existing user
+     *
      * @param int $id
      * @param array $attributes
      * @return bool
@@ -53,6 +59,8 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
+     * Get a single user by id
+     *
      * @param int $id
      * @return mixed
      */
@@ -62,6 +70,8 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
+     * Soft delete a user
+     *
      * @param int $id
      * @return mixed
      */

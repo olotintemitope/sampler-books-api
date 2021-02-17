@@ -60,6 +60,12 @@ class BookControllerTest extends TestCase
         );
         $content = json_decode($res->getContent());
         $data = $content->data;
+
+        self::assertFalse($content->success);
+        self::assertEquals("The title field is required.", $data->title[0]);
+        self::assertEquals("The isbn field is required.", $data->isbn[0]);
+        self::assertEquals("The published at field is required.", $data->published_at[0]);
+        self::assertEquals("The status field is required.", $data->status[0]);
     }
 
     /**

@@ -36,9 +36,15 @@ class BookRepository implements UserRepositoryInterface
         return $this->book::all();
     }
 
+    /**
+     * Create a new book
+     *
+     * @param array $attributes
+     * @return mixed
+     */
     public function create(array $attributes)
     {
-        // TODO: Implement create() method.
+        return $this->book->create($attributes);
     }
 
     public function delete(int $id)
