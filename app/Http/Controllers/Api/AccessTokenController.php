@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Traits\ValidationTrait;
 use App\Models\User;
 use Exception;
 use GuzzleHttp\Client;
@@ -10,10 +11,7 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use stdClass;
 
 /**
  * Class AccessTokenController
@@ -21,6 +19,8 @@ use stdClass;
  */
 class AccessTokenController extends BaseController
 {
+    use ValidationTrait;
+
     /**
      * @var Client $httpClient
      */
@@ -45,7 +45,8 @@ class AccessTokenController extends BaseController
      */
     public function login(Request $request)
     {
-        $validator = $this->getUserloginValidator($request);
+        $validator = $this->getUserLoginValidator($request);
+
         if ($validator->fails()) {
             return $this->sendError($validator->errors(), Response::HTTP_BAD_REQUEST);
         }
@@ -67,22 +68,20 @@ class AccessTokenController extends BaseController
      */
     protected function getUserByEmailAndPassword(Request $request)
     {
-        $user = User::where('email', $request->email)
+        return User::where('email', $request->email)
             ->Where('password', $request->password)
             ->first();
-        return $user;
     }
 
     /**
      * @param Request $request
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function getUserloginValidator(Request $request): \Illuminate\Contracts\Validation\Validator
+    protected function getUserLoginValidator(Request $request): \Illuminate\Contracts\Validation\Validator
     {
-        $validator = Validator::make($request->all(), [
+        return Validator::make($request->all(), [
             "email" => "required|email|exists:users",
-            "password" => "required",
+            "password" => $this->getPasswordValidation(),
         ]);
-        return $validator;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Repository\UserRepository;
+use App\Http\Traits\ValidationTrait;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends BaseController
 {
+    use ValidationTrait;
+
     /**
      * @var UserRepository
      */
@@ -108,7 +111,7 @@ class UserController extends BaseController
         return Validator::make($request->all(), [
             'name' => 'required|unique:users|max:255',
             'email' => 'required|email|unique:users|max:255',
-            'password' => 'required|alpha_num|min:8',
+            'password' => $this->getPasswordValidation(),
             'date_of_birth' => 'required|date|date_format:Y-m-d'
         ]);
     }
@@ -122,7 +125,7 @@ class UserController extends BaseController
         return Validator::make($request->all(), [
             'name' => 'sometimes|unique:users|max:255',
             'email' => 'sometimes|email|unique:users|max:255',
-            'password' => 'sometimes|alpha_num|min:8',
+            'password' => $this->getOptionalPasswordValidation(),
             'date_of_birth' => 'sometimes|date|date_format:Y-m-d'
         ]);
     }
