@@ -63,14 +63,48 @@ class AccessTokenController extends BaseController
     }
 
     /**
+     * Log the user out and remove all the access tokens
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function logout(Request $request): JsonResponse
+    {
+        $validator = $this->getUserEmailValidator($request);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors(), Response::HTTP_BAD_REQUEST);
+        }
+
+        $user = $this->getUserByEmail($request);
+
+        if (null === $user) {
+            return $this->sendError('User not found, you need to register', [], Response::HTTP_BAD_REQUEST);
+        }
+
+        $user->tokens()->each(static function($token) {
+            $token->revoke();
+        });
+
+        return $this->sendResponse([], Response::HTTP_NO_CONTENT);
+    }
+
+    /**
      * @param Request $request
      * @return mixed
      */
     protected function getUserByEmailAndPassword(Request $request)
     {
-        return User::where('email', $request->email)
-            ->Where('password', $request->password)
-            ->first();
+        return User::ofEmailAndPassword($request->email, $request->password);
+    }
+
+    /**
+     * @param Request $request
+     * @return mixed
+     */
+    protected function getUserByEmail(Request $request)
+    {
+        return User::ofEmail($request->email);
     }
 
     /**
@@ -82,6 +116,18 @@ class AccessTokenController extends BaseController
         return Validator::make($request->all(), [
             "email" => "required|email|exists:users",
             "password" => $this->getPasswordValidation(),
+        ]);
+    }
+
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function getUserEmailValidator(Request $request): \Illuminate\Contracts\Validation\Validator
+    {
+        return Validator::make($request->all(), [
+            "email" => "required|email|exists:users",
         ]);
     }
 }

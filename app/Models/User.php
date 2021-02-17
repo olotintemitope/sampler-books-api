@@ -43,6 +43,30 @@ class User extends Authenticatable
     ];
 
     /**
+     * @param $query
+     * @param $email
+     * @return mixed
+     */
+    public function scopeOfEmail($query, $email)
+    {
+        return $query->where('email', $email)
+            ->first();
+    }
+
+    /**
+     * @param $query
+     * @param string $email
+     * @param string $password
+     * @return mixed
+     */
+    public function scopeOfEmailAndPassword($query, string $email, string $password)
+    {
+        return $query->where('email', $email)
+            ->Where('password', $password)
+            ->first();
+    }
+
+    /**
      * @return BelongsToMany
      */
     public function books(): BelongsToMany
