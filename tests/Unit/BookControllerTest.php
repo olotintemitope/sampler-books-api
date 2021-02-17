@@ -90,6 +90,28 @@ class BookControllerTest extends TestCase
         self::assertEquals("The selected isbn is invalid.", $data->isbn[0]);
     }
 
+    public function testThatRequestWithInvalidDateFormatWillBeRejected(): void
+    {
+        $headers = $this->authorizeUser();
+
+        $res = $this->json(
+            'POST',
+            route('api.book_create'),
+            $this->getBookPostData(
+                'The heroes of sampler',
+                '0441013597',
+                now()->format('Y/m/d'),
+                'CHECKED_OUT'
+            ),
+            $headers
+        );
+        $content = json_decode($res->getContent());
+        $data = $content->data;
+
+        self::assertFalse($content->success);
+        self::assertEquals('The published at does not match the format Y-m-d.', $data->published_at[0]);
+    }
+
     /**
      * Set book data
      *
