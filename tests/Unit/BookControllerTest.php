@@ -112,6 +112,37 @@ class BookControllerTest extends TestCase
         self::assertEquals('The published at does not match the format Y-m-d.', $data->published_at[0]);
     }
 
+    public function testThatUserCanCreateBook(): void
+    {
+        $headers = $this->authorizeUser();
+
+        $res = $this->json(
+            'POST',
+            route('api.book_create'),
+            $this->getBookPostData(
+                'The heroes of sampler dome',
+                '0441013597',
+                now()->format('Y-m-d'),
+                'CHECKED_OUT'
+            ),
+            $headers
+        );
+        $content = json_decode($res->getContent());
+        $data = $content->data;
+
+        $res->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    'id',
+                    'title',
+                    'isbn',
+                    'published_at',
+                    'status',
+                ]
+            ]);
+    }
+
     /**
      * Set book data
      *
