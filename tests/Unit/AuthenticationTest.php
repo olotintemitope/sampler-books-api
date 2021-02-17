@@ -6,6 +6,7 @@ namespace Tests\Unit;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Response;
 use Tests\AuthorizationTrait;
 use Tests\TestCase;
 
@@ -27,19 +28,29 @@ class AuthenticationTest extends TestCase
 
     public function testThatUserCanLogin(): void
     {
-        $this->authorizeUser([
-            'email' => 'testing@sampler2.com',
-            'password' => 'Lazopoty02'
-        ]);
+        $user = factory(User::class)->create();
+
+        $this->authorizeUser();
 
         $res = $this->json(
             'POST',
             route('api.user_login'), [
-                'email' => 'testing@sampler2.com',
-                'password' => 'Lazopoty02',
-                ]);
+            'email' => $user->email,
+            'password' => $user->password
+        ]);
 
-        dd($res->content());
+        $res->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                        'id',
+                        'name',
+                        'email',
+                        'date_of_birth',
+                        'token',
+                    ]
+
+            ]);
     }
 
     public function tearDown(): void
