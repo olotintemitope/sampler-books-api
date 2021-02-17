@@ -47,4 +47,37 @@ class BookControllerTest extends TestCase
             ]);
 
     }
+
+    public function testThatBookCannotBeCreatedWithEmptyDetails(): void
+    {
+        $headers = $this->authorizeUser();
+
+        $res = $this->json(
+            'POST',
+            route('api.book_create'),
+            $this->getBookPostData(),
+            $headers
+        );
+        $content = json_decode($res->getContent());
+        $data = $content->data;
+    }
+
+    /**
+     * Set book data
+     *
+     * @param string $title
+     * @param string $isbn
+     * @param string $publishedAt
+     * @param string $status
+     * @return string[]
+     */
+    protected function getBookPostData($title = '', $isbn = '', $publishedAt = '', $status = ''): array
+    {
+        return [
+            'title' => $title,
+            'isbn' => $isbn,
+            'published_at' => $publishedAt,
+            'status' => $status,
+        ];
+    }
 }

@@ -27,4 +27,7 @@ Route::group([
     });
 
     Route::get('/book', 'BookController@getAll')->name('api.book_all');
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::post('/book', 'BookController@create')->name('api.book_create');
+    });
 });
