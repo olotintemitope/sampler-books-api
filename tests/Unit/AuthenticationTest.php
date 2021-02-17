@@ -74,8 +74,9 @@ class AuthenticationTest extends TestCase
             'POST',
             route('api.user_logout'), [
             'email' => $user->email,
-            'password' => $user->password
         ]);
+
+        dd($res->content());
     }
 
     public function tearDown(): void
