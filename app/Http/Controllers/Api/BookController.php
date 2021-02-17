@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Repository\BookRepository;
 use App\Http\Repository\UserRepository;
 use App\Models\Book;
+use App\Rules\ValidIsbn;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -126,7 +127,13 @@ class BookController extends BaseController
     {
         return Validator::make($request->all(), [
             'title' => 'required|unique:books|max:255',
-            'isbn' => "required|unique:books|in:$bookNumbers|max:10",
+            'isbn' => [
+                "required",
+                "unique:books",
+                "in:$bookNumbers",
+                "max:10",
+                new ValidIsbn
+            ],
             'published_at' => 'required|date|date_format:Y-m-d',
             'status' => "required|string|in:$statuses",
         ]);
@@ -144,7 +151,13 @@ class BookController extends BaseController
     {
         return Validator::make($request->all(), [
             'title' => 'sometimes|unique:books|max:255',
-            'isbn' => "sometimes|unique:books|in:$bookNumbers|max:10",
+            'isbn' => [
+                "sometimes",
+                "unique:books",
+                "in:$bookNumbers",
+                "max:10",
+                new ValidIsbn
+            ],
             'published_at' => 'sometimes|date|date_format:Y-m-d',
             'status' => "sometimes|string|in:$statuses",
         ]);
