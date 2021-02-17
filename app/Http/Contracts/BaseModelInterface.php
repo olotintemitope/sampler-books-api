@@ -37,5 +37,11 @@ interface BaseModelInterface
      * @return mixed
      */
     public function findOne(int $id);
+
+    /**
+     * @param int $id
+     * @param array $attributes
+     * @return mixed
+     */
 //    public function findWhere(int $id, array $attributes);
 }

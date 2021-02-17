@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\User;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Foundation\Application;
@@ -9,6 +10,7 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use stdClass;
@@ -35,61 +37,52 @@ class AccessTokenController extends BaseController
     }
 
     /**
+     * Login and return token back to the user
+     *
      * @param Request $request
      * @return Application|ResponseFactory|JsonResponse|Response
      * @throws Exception
      */
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            "email"    => "required|email|exists:users",
-            "password" => "required",
-        ]);
-
+        $validator = $this->getUserloginValidator($request);
         if ($validator->fails()) {
             return $this->sendError($validator->errors(), Response::HTTP_BAD_REQUEST);
         }
 
-        $credentials = $this->credentials();
-
-        try {
-            $response = $this->httpClient->post('/oauth/token', [
-                'form_params' => [
-                    'client_id'     => $credentials->client_id,
-                    'client_secret' => $credentials->client_secret,
-                    'grant_type'    => $credentials->grant,
-                    'username'      => $request->get('email'),
-                    'password'      => $request->get('password'),
-                    'scopes'        => '[*]',
-                ]
-            ]);
-        } catch (Exception $exception) {
-            if ($exception->getCode() === Response::HTTP_UNAUTHORIZED) {
-                return response(['message' => 'Invalid user credentials'], 401);
-            }
-
-            throw $exception;
+        $user = $this->getUserByEmailAndPassword($request);
+        if (null === $user) {
+            return $this->sendError('User not registered, you need to register', [], Response::HTTP_BAD_REQUEST);
         }
 
-        return $this->sendResponse($response);
+        $accessToken = $user->createToken('sam')->accessToken;
+        $user->token = $accessToken;
+
+        return $this->sendResponse($user->toArray());
     }
 
     /**
-     * Return credentials from cache or database if not set.
-     *
-     * @return object
+     * @param Request $request
+     * @return mixed
      */
-    private function credentials(): object
+    protected function getUserByEmailAndPassword(Request $request)
     {
-        $client = DB::table('oauth_clients')
-            ->where('password_client', true)
+        $user = User::where('email', $request->email)
+            ->Where('password', $request->password)
             ->first();
+        return $user;
+    }
 
-        $response = new stdClass();
-        $response->grant = 'password';
-        $response->client_id = $client->id;
-        $response->client_secret = $client->secret;
-
-        return $response;
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function getUserloginValidator(Request $request): \Illuminate\Contracts\Validation\Validator
+    {
+        $validator = Validator::make($request->all(), [
+            "email" => "required|email|exists:users",
+            "password" => "required",
+        ]);
+        return $validator;
     }
 }
