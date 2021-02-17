@@ -202,6 +202,22 @@ class BookControllerTest extends TestCase
         self::assertTrue($content->success);
     }
 
+    public function testThatUserWithoutTokenCannotRegisterTheirDetails(): void
+    {
+        $book = factory(Book::class)->create();
+
+        $res = $this->json(
+            'PUT',
+            route('api.book_update', ['id' => $book->id]),
+            [
+                'title' => 'The kings of sampler dome',
+                'status' => 'CHECKED_OUT',
+            ]
+        );
+
+        $res->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
     /**
      * Set book data
      *
