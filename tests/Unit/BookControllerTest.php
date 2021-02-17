@@ -225,8 +225,7 @@ class BookControllerTest extends TestCase
 
         $res = $this->json(
             'DELETE',
-            route('api.book_delete', ['id' => $book->id]), [
-        ]);
+            route('api.book_delete', ['id' => $book->id]));
 
         self::assertEquals($res->getStatusCode(), Response::HTTP_UNAUTHORIZED);
     }
@@ -249,4 +248,5 @@ class BookControllerTest extends TestCase
             'status' => $status,
         ];
     }
+
 }

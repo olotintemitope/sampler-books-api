@@ -96,6 +96,25 @@ class BookController extends BaseController
     }
 
     /**
+     * Delete book details
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function delete($id): JsonResponse
+    {
+        $user = $this->bookRepository->findOne($id);
+
+        if (null === $user) {
+            return $this->sendError('Book not found');
+        }
+
+        $this->bookRepository->delete($id);
+
+        return $this->sendResponse([], Response::HTTP_OK);
+    }
+
+    /**
      * Get the book validator
      *
      * @param Request $request

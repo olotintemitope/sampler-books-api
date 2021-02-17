@@ -30,5 +30,6 @@ Route::group([
     Route::group(['middleware' => 'auth:api'], function () {
         Route::post('/book', 'BookController@create')->name('api.book_create');
         Route::put('/book/{id}/update', 'BookController@update')->name('api.book_update');
+        Route::delete('/book/{id}/delete', 'BookController@delete')->name('api.book_delete');
     });
 });

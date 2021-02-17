@@ -47,9 +47,17 @@ class BookRepository implements UserRepositoryInterface
         return $this->book->create($attributes);
     }
 
+    /**
+     * Soft delete a book
+     *
+     * @param int $id
+     * @return mixed
+     */
     public function delete(int $id)
     {
-        // TODO: Implement delete() method.
+        return $this->findOne($id)
+            ->first()
+            ->delete();
     }
 
     /**
