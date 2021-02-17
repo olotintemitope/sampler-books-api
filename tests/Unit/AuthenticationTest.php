@@ -65,6 +65,19 @@ class AuthenticationTest extends TestCase
         self::assertEquals($res->getStatusCode(), Response::HTTP_NOT_FOUND);
     }
 
+    public function testThatUserWithCredentialsCanLogOut() : void
+    {
+        $user = factory(User::class)->create();
+        $this->authorizeUser();
+
+        $res = $this->json(
+            'POST',
+            route('api.user_logout'), [
+            'email' => $user->email,
+            'password' => $user->password
+        ]);
+    }
+
     public function tearDown(): void
     {
         try {
