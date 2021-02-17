@@ -23,5 +23,6 @@ Route::group([
 
     Route::group([], function () {
         Route::post('auth/login', 'AccessTokenController@login')->name('api.user_login');
+        Route::post('auth/logout', 'AccessTokenController@logout')->name('api.user_logout');
     });
 });
