@@ -68,6 +68,28 @@ class BookControllerTest extends TestCase
         self::assertEquals("The status field is required.", $data->status[0]);
     }
 
+    public function testThatIsbnSuppliedIsInvalid(): void
+    {
+        $headers = $this->authorizeUser();
+
+        $res = $this->json(
+            'POST',
+            route('api.book_create'),
+            $this->getBookPostData(
+                'The heros of sampler',
+                '1234567890',
+                now()->format('Y-m-d'),
+                'CHECKED_OUT'
+            ),
+            $headers
+        );
+        $content = json_decode($res->getContent());
+        $data = $content->data;
+
+        self::assertFalse($content->success);
+        self::assertEquals("The selected isbn is invalid.", $data->isbn[0]);
+    }
+
     /**
      * Set book data
      *
