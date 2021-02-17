@@ -275,7 +275,7 @@ class UserControllerTest extends TestCase
         self::assertEquals($res->getStatusCode(), Response::HTTP_NOT_FOUND);
     }
 
-    public function testThatUserWithTokenCannotBeSoftDeleted(): void
+    public function testThatUserWithTokenBeSoftDeleted(): void
     {
         $headers = $this->authorizeUser();
         $user = factory(User::class)->create();

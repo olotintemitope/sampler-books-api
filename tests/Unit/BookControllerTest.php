@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Book;
+use App\Models\User;
 use Illuminate\Http\Response;
 use Tests\AuthorizationTrait;
 use Tests\TestCase;
@@ -239,6 +240,19 @@ class BookControllerTest extends TestCase
         ], $headers);
 
         self::assertEquals($res->getStatusCode(), Response::HTTP_NOT_FOUND);
+    }
+
+    public function testThatBookWithAValidIdCanBeSoftDeleted(): void
+    {
+        $headers = $this->authorizeUser();
+        $book = factory(Book::class)->create();
+
+        $res = $this->json(
+            'DELETE',
+            route('api.book_delete', ['id' => $book->id]), [
+        ], $headers);
+
+        self::assertEquals($res->getStatusCode(), Response::HTTP_OK);
     }
 
     /**
