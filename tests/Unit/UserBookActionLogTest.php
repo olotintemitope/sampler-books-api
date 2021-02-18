@@ -134,6 +134,32 @@ class UserBookActionLogTest extends TestCase
 
     }
 
+    public function testThatBooksWithInvalidIdsCannotBeCheckedOut(): void
+    {
+        $headers = $this->authorizeUser();
+
+        $user = factory(User::class)->create();
+
+        factory(UserActionLog::class, 3)->create(
+            [
+                'user_id' => $user->id,
+            ]
+        );
+
+        $res = $this->json(
+            'POST',
+            route('api.user_book_checkout', ['id' => $user->id]),
+            $this->getUserBooksPostData([40, 80]),
+            $headers
+        );
+
+        $content = json_decode($res->getContent());
+
+        self::assertEquals($content->data->{0}, "Book with ID: 40 not found");
+        self::assertEquals($content->data->{1}, "Book with ID: 80 not found");
+
+    }
+
     /**
      * @param array $books
      * @return string[]
