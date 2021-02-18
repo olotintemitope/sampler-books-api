@@ -108,6 +108,32 @@ class UserBookActionLogTest extends TestCase
         self::assertTrue($content->success);
     }
 
+    public function testThatBooksWithInvalidIdsCannotBeCheckedIn(): void
+    {
+        $headers = $this->authorizeUser();
+
+        $user = factory(User::class)->create();
+
+        factory(UserActionLog::class, 3)->create(
+            [
+                'user_id' => $user->id,
+            ]
+        );
+
+        $res = $this->json(
+            'POST',
+            route('api.user_book_checkin', ['id' => $user->id]),
+            $this->getUserBooksPostData([200, 500]),
+            $headers
+        );
+
+        $content = json_decode($res->getContent());
+
+        self::assertEquals($content->data->{0}, "Book with ID: 200 not found");
+        self::assertEquals($content->data->{1}, "Book with ID: 500 not found");
+
+    }
+
     /**
      * @param array $books
      * @return string[]
