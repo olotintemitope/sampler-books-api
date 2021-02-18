@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Repository\BookRepository;
 use App\Http\Repository\UserRepository;
 use App\Http\Traits\ValidationTrait;
+use App\Models\Book;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,14 +16,21 @@ class UserController extends BaseController
 {
     use ValidationTrait;
 
+    private const CHECKED_OUT = 'CHECKED_OUT';
+
     /**
      * @var UserRepository
      */
     private $userRepository;
+    /**
+     * @var BookRepository
+     */
+    private $bookRepository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, BookRepository $bookRepository)
     {
         $this->userRepository = $userRepository;
+        $this->bookRepository = $bookRepository;
     }
 
     /**
@@ -129,18 +138,40 @@ class UserController extends BaseController
      * Checkin books
      *
      * @param Request $request
+     * @param int $id
      * @return JsonResponse
      */
-    public function checkInBooks(Request $request): JsonResponse
+    public function checkInBooks(Request $request, int $id): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'books' => 'required|array|min:1',
-            'books.*' => 'required|distinct|min:1'
-        ]);
+        $validator = $this->getBooksValidator($request);
 
         if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
         }
+
+        $user = $this->userRepository->findOne($id);
+        if (null === $user) {
+            return $this->sendError('User not found');
+        }
+
+        $booksError = $this->getBooksById($request);
+        $errors = $this->checkAvailableBooks($request);
+        $validator->errors()->merge(array_merge($booksError, $errors));
+
+        if (count($validator->errors()->messages()) > 0) {
+            $validator->errors()->add('books', $validator->errors()->messages());
+
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
+        // Update the Book Availability to CHECKED_OUT
+        $user->books()->attach($request->books, [
+            'action' => 'CHECKIN'
+        ]);
+
+        $this->updateBooks($request, self::CHECKED_OUT);
+
+        return $this->sendResponse([], Response::HTTP_CREATED);
     }
 
     /**
@@ -173,5 +204,72 @@ class UserController extends BaseController
             'password' => $this->getOptionalPasswordValidation(),
             'date_of_birth' => 'sometimes|date|date_format:Y-m-d'
         ]);
+    }
+
+    /**
+     * Check if books exists
+     *
+     * @param Request $request
+     * @return array
+     */
+    protected function getBooksById(Request $request): array
+    {
+        $errors = [];
+        collect($request->books)->each(function ($bookId) use (&$errors) {
+            $book = $this->bookRepository->findOne($bookId);
+            if (null === $book) {
+                $errors[] = "Book with ID: {$bookId} not found";
+            }
+        });
+        return $errors;
+    }
+
+    /**
+     * Check if books exists
+     *
+     * @param Request $request
+     * @return array
+     */
+    protected function checkAvailableBooks(Request $request): array
+    {
+        $errors = [];
+
+        Book::query()
+            ->whereIn('id', $request->books)
+            ->get()
+            ->each(function ($book) {
+                if (null !== $book && $book->status === self::CHECKED_OUT) {
+                    $errors[] = "Book with ID: {$book->id} not available";
+                }
+            });
+
+        return $errors;
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function getBooksValidator(Request $request): \Illuminate\Contracts\Validation\Validator
+    {
+        return Validator::make($request->all(), [
+            'books' => 'required|array|min:1',
+            'books.*' => 'required|distinct|min:1'
+        ]);
+    }
+
+    /**
+     * Update the book status
+     *
+     * @param Request $request
+     * @param string $status
+     */
+    protected function updateBooks(Request $request, string $status): void
+    {
+        collect($request->books)->each(function ($bookId) use ($status) {
+            $this->bookRepository->update($bookId, [
+                'status' => $status
+            ]);
+        });
     }
 }

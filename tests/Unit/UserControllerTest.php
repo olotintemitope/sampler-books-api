@@ -329,8 +329,6 @@ class UserControllerTest extends TestCase
         ];
     }
 
-
-
     public function tearDown(): void
     {
         try {
