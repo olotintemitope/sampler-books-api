@@ -21,6 +21,7 @@ Route::group([
         Route::post('/user', 'UserController@create')->name('api.user_create');
         Route::put('/user/{id}/update', 'UserController@update')->name('api.user_update');
         Route::delete('/user/{id}/delete', 'UserController@delete')->name('api.user_delete');
+        Route::post('/user/{id}', 'UserController@checkInBooks')->name('api.user_book_checkin');
     });
 
     Route::group([], function () {

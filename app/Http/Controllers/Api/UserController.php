@@ -126,6 +126,24 @@ class UserController extends BaseController
     }
 
     /**
+     * Checkin books
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function checkInBooks(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'books' => 'required|array|min:1',
+            'books.*' => 'required|distinct|min:1'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+    }
+
+    /**
      * Validate create user
      *
      * @param Request $request
