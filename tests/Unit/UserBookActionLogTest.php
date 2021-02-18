@@ -75,6 +75,39 @@ class UserBookActionLogTest extends TestCase
         self::assertTrue($content->success);
     }
 
+    public function testThatUserCanCheckOutBooks(): void
+    {
+        $headers = $this->authorizeUser();
+
+        $user = factory(User::class)->create();
+
+        factory(UserActionLog::class, 3)->create(
+            [
+                'user_id' => $user->id,
+            ]
+        );
+
+        $bookIds = factory(Book::class, 3)->create()->pluck('id')->toArray();
+
+        $res = $this->json(
+            'POST',
+            route('api.user_book_checkout', ['id' => $user->id]),
+            $this->getUserBooksPostData($bookIds),
+            $headers
+        );
+
+        $res->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                ]
+            ]);
+
+        $content = json_decode($res->getContent());
+
+        self::assertTrue($content->success);
+    }
+
     /**
      * @param array $books
      * @return string[]

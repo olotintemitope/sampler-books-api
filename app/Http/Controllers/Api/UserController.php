@@ -17,6 +17,7 @@ class UserController extends BaseController
     use ValidationTrait;
 
     private const CHECKED_OUT = 'CHECKED_OUT';
+    private const AVAILABLE = 'AVAILABLE';
 
     /**
      * @var UserRepository
@@ -175,6 +176,43 @@ class UserController extends BaseController
     }
 
     /**
+     * Checkout books
+     *
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function checkOutBooks(Request $request, int $id): JsonResponse
+    {
+        $validator = $this->getBooksValidator($request);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
+        $user = $this->userRepository->findOne($id);
+        if (null === $user) {
+            return $this->sendError('User not found');
+        }
+
+        $this->getValidator($request, $validator);
+
+        if (count($validator->errors()->messages()) > 0) {
+            $validator->errors()->add('books', $validator->errors()->messages());
+
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
+        // Update the Book Availability to AVAILABLE
+        $user->books()->attach($request->books, [
+            'action' => 'CHECKOUT'
+        ]);
+
+        $this->updateBooks($request, self::AVAILABLE);
+
+        return $this->sendResponse([], Response::HTTP_CREATED);
+    }
+
+    /**
      * Validate create user
      *
      * @param Request $request
@@ -271,5 +309,18 @@ class UserController extends BaseController
                 'status' => $status
             ]);
         });
+    }
+
+    /**
+     * Check and merge validation errors
+     *
+     * @param Request $request
+     * @param \Illuminate\Contracts\Validation\Validator $validator
+     */
+    protected function getValidator(Request $request, \Illuminate\Contracts\Validation\Validator $validator): void
+    {
+        $booksError = $this->getBooksById($request);
+        $errors = $this->checkAvailableBooks($request);
+        $validator->errors()->merge(array_merge($booksError, $errors));
     }
 }
