@@ -4,6 +4,7 @@ namespace App\Http\Repository;
 
 use App\Http\Contracts\UserRepositoryInterface;
 use App\Models\Book;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -81,5 +82,15 @@ class BookRepository implements UserRepositoryInterface
     public function findOne(int $id)
     {
         return $this->book->find($id);
+    }
+
+    /**
+     * Get the model query builder
+     *
+     * @return Builder
+     */
+    public function query(): Builder
+    {
+        return $this->book->newQuery();
     }
 }

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Repository\BookRepository;
 use App\Http\Repository\UserRepository;
 use App\Http\Traits\ValidationTrait;
-use App\Models\Book;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -272,7 +271,8 @@ class UserController extends BaseController
     {
         $errors = [];
 
-        Book::query()
+        $this->bookRepository
+            ->query()
             ->whereIn('id', $request->books)
             ->get()
             ->each(function ($book) {
