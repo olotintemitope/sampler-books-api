@@ -228,7 +228,7 @@ class BookControllerTest extends TestCase
         self::assertTrue($content->success);
     }
 
-    public function testThatUserWithoutTokenCannotRegisterTheirDetails(): void
+    public function testThatRequestWithoutTokenCannotUpdateBookDetails(): void
     {
         $book = factory(Book::class)->create();
 
