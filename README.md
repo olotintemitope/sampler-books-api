@@ -20,10 +20,6 @@ The test uses sqlite DB for fast running of the test cases.
 ## API Documentation
 - Visit [https://documenter.getpostman.com/view/3781859/TWDWHwRW#0b44bc32-1c1d-41c2-9d3b-27bf0bf4442a][Link to documentation]
 
-## License
-
-The Laravel framework is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
 [Link to documentation]: https://documenter.getpostman.com/view/3781859/TWDWHwRW#0b44bc32-1c1d-41c2-9d3b-27bf0bf4442a
 
 [Download Docker]: https://www.docker.com/get-started
