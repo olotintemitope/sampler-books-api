@@ -41,6 +41,7 @@ class ValidIsbn implements Rule
      *
      * @return string
      */
+
     public function message(): string
     {
         return 'TThe :attribute must be a valid ISBN.';
