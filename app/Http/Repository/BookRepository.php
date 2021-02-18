@@ -2,7 +2,7 @@
 
 namespace App\Http\Repository;
 
-use App\Http\Contracts\UserRepositoryInterface;
+use App\Http\Contracts\BookRepositoryInterface;
 use App\Models\Book;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
  * Class BookRepository
  * @package App\Http\Repository
  */
-class BookRepository implements UserRepositoryInterface
+class BookRepository implements BookRepositoryInterface
 {
     /**
      * @var Book
