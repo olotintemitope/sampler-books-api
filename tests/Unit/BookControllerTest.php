@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Models\Book;
-use App\Models\User;
 use Illuminate\Http\Response;
 use Tests\AuthorizationTrait;
 use Tests\TestCase;
@@ -143,6 +142,32 @@ class BookControllerTest extends TestCase
                     'status',
                 ]
             ]);
+    }
+
+    public function testGetASingleBookDetail(): void
+    {
+        $book = factory(Book::class)->create();
+
+        $res = $this->json(
+            'GET',
+            route('api.book_find', ['id' => $book->id])
+        );
+
+        $res->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    'id',
+                    'title',
+                    'isbn',
+                    'published_at',
+                    'status',
+                ]
+            ]);
+
+        $content = json_decode($res->getContent());
+
+        self::assertTrue($content->success);
     }
 
     public function testUpdateBookDetails(): void

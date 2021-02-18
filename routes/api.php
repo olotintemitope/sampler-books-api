@@ -15,6 +15,8 @@ Route::group([
     'namespace' => 'Api',
 ], function () {
     Route::get('/user', 'UserController@getAll')->name('api.user_all');
+    Route::get('/user/{id}', 'UserController@find')->name('api.user_find');
+
     Route::group(['middleware' => 'auth:api'], function () {
         Route::post('/user', 'UserController@create')->name('api.user_create');
         Route::put('/user/{id}/update', 'UserController@update')->name('api.user_update');
@@ -27,6 +29,8 @@ Route::group([
     });
 
     Route::get('/book', 'BookController@getAll')->name('api.book_all');
+    Route::get('/book/{id}', 'BookController@find')->name('api.book_find');
+
     Route::group(['middleware' => 'auth:api'], function () {
         Route::post('/book', 'BookController@create')->name('api.book_create');
         Route::put('/book/{id}/update', 'BookController@update')->name('api.book_update');

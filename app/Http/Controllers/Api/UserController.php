@@ -109,6 +109,23 @@ class UserController extends BaseController
     }
 
     /**
+     * Find a single user details
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function find($id): JsonResponse
+    {
+        $user = $this->userRepository->findOne($id);
+
+        if (null === $user) {
+            return $this->sendError('User not found');
+        }
+
+        return $this->sendResponse($user->toArray(), Response::HTTP_OK);
+    }
+
+    /**
      * Validate create user
      *
      * @param Request $request

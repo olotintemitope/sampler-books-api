@@ -163,6 +163,30 @@ class UserControllerTest extends TestCase
             ]);
     }
 
+    public function testThatYouCanGetASingleUser(): void
+    {
+        $user = factory(User::class)->create();
+
+        $res = $this->json(
+            'GET',
+            route('api.user_find', ['id' => $user->id]));
+
+        $res->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    'id',
+                    'name',
+                    'email',
+                    'date_of_birth',
+                ]
+            ]);
+
+        $content = json_decode($res->getContent());
+
+        self::assertTrue($content->success);
+    }
+
     public function testThatUserCanUpdateTheirDetails(): void
     {
         $headers = $this->authorizeUser();

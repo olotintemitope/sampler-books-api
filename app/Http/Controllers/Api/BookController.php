@@ -116,6 +116,23 @@ class BookController extends BaseController
     }
 
     /**
+     * Find a single book details
+     *
+     * @param $id
+     * @return JsonResponse
+     */
+    public function find($id): JsonResponse
+    {
+        $user = $this->bookRepository->findOne($id);
+
+        if (null === $user) {
+            return $this->sendError('Book not found');
+        }
+
+        return $this->sendResponse($user->toArray(), Response::HTTP_OK);
+    }
+
+    /**
      * Get the book validator
      *
      * @param Request $request
