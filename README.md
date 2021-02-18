@@ -20,6 +20,6 @@ The test uses sqlite DB for fast running of the test cases.
 ## API Documentation
 - Visit [https://documenter.getpostman.com/view/3781859/TWDWHwRW#0b44bc32-1c1d-41c2-9d3b-27bf0bf4442a][Link to documentation]
 
-[Link to documentation]: https://documenter.getpostman.com/view/3781859/TWDWHwRW#0b44bc32-1c1d-41c2-9d3b-27bf0bf4442a
+[Link to documentation]: https://documenter.getpostman.com/view/3781859/TWDWHwRW#9196a0e9-86a5-442f-b355-842f93945ffe
 
 [Download Docker]: https://www.docker.com/get-started
