@@ -51,8 +51,7 @@ class User extends Authenticatable
      */
     public function scopeOfEmail($query, $email)
     {
-        return $query->where('email', $email)
-            ->first();
+        return $query->where('email', $email)->first();
     }
 
     /**
@@ -64,7 +63,7 @@ class User extends Authenticatable
     public function scopeOfEmailAndPassword($query, string $email, string $password)
     {
         return $query->where('email', $email)
-            ->Where('password', $password)
+            ->where('password', $password)
             ->first();
     }
 

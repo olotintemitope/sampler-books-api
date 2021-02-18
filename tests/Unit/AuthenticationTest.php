@@ -67,8 +67,10 @@ class AuthenticationTest extends TestCase
 
     public function testThatUserWithCredentialsCanLogOut() : void
     {
-        $user = factory(User::class)->create();
         $this->authorizeUser();
+
+        $user = factory(User::class)->create();
+
 
         $res = $this->json(
             'POST',

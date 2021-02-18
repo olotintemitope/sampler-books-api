@@ -112,7 +112,7 @@ class BookController extends BaseController
 
         $this->bookRepository->delete($id);
 
-        return $this->sendResponse([], Response::HTTP_OK);
+        return $this->sendResponse([], Response::HTTP_NO_CONTENT);
     }
 
     /**

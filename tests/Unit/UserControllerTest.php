@@ -260,21 +260,6 @@ class UserControllerTest extends TestCase
         self::assertTrue($content->success);
     }
 
-    public function testThatUserWithoutTokenCannotRegisterTheirDetails(): void
-    {
-        $res = $this->json(
-            'POST',
-            route('api.user_create'),
-            $this->getUserPostData(
-                'testing@sampler.com',
-                'Sampler User',
-                ucwords(bin2hex(random_bytes(10))),
-                now()->addDays(10)->format('Y-m-d')
-            ));
-
-        $res->assertStatus(Response::HTTP_UNAUTHORIZED);
-    }
-
     public function testThatUserWithoutTokenCannotSoftDeleteTheirData(): void
     {
         $user = factory(User::class)->create();
@@ -309,7 +294,7 @@ class UserControllerTest extends TestCase
             route('api.user_delete', ['id' => $user->id]), [
         ], $headers);
 
-        self::assertEquals($res->getStatusCode(), Response::HTTP_OK);
+        self::assertEquals($res->getStatusCode(), Response::HTTP_NO_CONTENT);
     }
 
     /**

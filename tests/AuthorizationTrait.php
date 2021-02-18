@@ -24,6 +24,9 @@ trait AuthorizationTrait
 
         Passport::actingAs($user);
 
-        return ["Authorization" => "Bearer $userToken"];
+        return [
+            "Authorization" => "Bearer $userToken",
+            "Accept" => "application/json"
+        ];
     }
 }

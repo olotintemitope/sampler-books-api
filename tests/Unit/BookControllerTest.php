@@ -277,7 +277,7 @@ class BookControllerTest extends TestCase
             route('api.book_delete', ['id' => $book->id]), [
         ], $headers);
 
-        self::assertEquals($res->getStatusCode(), Response::HTTP_OK);
+        self::assertEquals($res->getStatusCode(), Response::HTTP_NO_CONTENT);
     }
 
     /**

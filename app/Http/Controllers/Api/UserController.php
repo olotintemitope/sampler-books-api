@@ -114,7 +114,7 @@ class UserController extends BaseController
 
         $this->userRepository->delete($id);
 
-        return $this->sendResponse([], Response::HTTP_OK);
+        return $this->sendResponse([], Response::HTTP_NO_CONTENT);
     }
 
     /**

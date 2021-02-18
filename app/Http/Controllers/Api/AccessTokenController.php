@@ -51,8 +51,9 @@ class AccessTokenController extends BaseController
             return $this->sendError($validator->errors(), Response::HTTP_BAD_REQUEST);
         }
 
-        $user = $this->getUserByEmailAndPassword($request);
-        if (null === $user) {
+        $user = $this->getUserByEmail($request);
+
+        if (null === $user || !password_verify($request->password, $user->password)) {
             return $this->sendError('User not registered, you need to register', [], Response::HTTP_BAD_REQUEST);
         }
 
@@ -77,7 +78,6 @@ class AccessTokenController extends BaseController
         }
 
         $user = $this->getUserByEmail($request);
-
         if (null === $user) {
             return $this->sendError('User not found, you need to register', [], Response::HTTP_BAD_REQUEST);
         }
@@ -95,7 +95,7 @@ class AccessTokenController extends BaseController
      */
     protected function getUserByEmailAndPassword(Request $request)
     {
-        return User::ofEmailAndPassword($request->email, $request->password);
+        return User::ofEmailAndPassword($request->email, bcrypt($request->password));
     }
 
     /**
