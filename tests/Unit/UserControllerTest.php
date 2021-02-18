@@ -14,7 +14,7 @@ use Tests\TestCase;
  */
 class UserControllerTest extends TestCase
 {
-    public const PASSWORD = '27kdN3r8A%X%';
+    private const PASSWORD = '27kdN3r8A%X%';
 
     use RefreshDatabase;
     use AuthorizationTrait;

@@ -16,8 +16,11 @@ use Tests\TestCase;
  */
 class AuthenticationTest extends TestCase
 {
+
     use RefreshDatabase;
     use AuthorizationTrait;
+
+    private const PASSWORD = '27kdN3r8A%X%';
 
     public function setUp(): void
     {
@@ -28,14 +31,19 @@ class AuthenticationTest extends TestCase
 
     public function testThatUserCanLogin(): void
     {
-        $user = factory(User::class)->create();
         $this->authorizeUser();
+
+        $user = factory(User::class)->create(
+            [
+                'password' => bcrypt(self::PASSWORD)
+            ]
+        );
 
         $res = $this->json(
             'POST',
             route('api.user_login'), [
             'email' => $user->email,
-            'password' => $user->password
+            'password' => self::PASSWORD
         ]);
 
         $res->assertStatus(Response::HTTP_OK)
@@ -83,6 +91,8 @@ class AuthenticationTest extends TestCase
 
     public function testThatUserWithoutCredentialsCannotLogOut() : void
     {
+        $this->authorizeUser();
+
         $res = $this->json(
             'POST',
             route('api.user_logout'), [
